@@ -1,6 +1,6 @@
 set(srcs
         "main.c"
-        "sketch.cpp")
+        "dualshock_servo.cpp")
 
 set(requires "bluepad32" "bluepad32_arduino" "arduino" "btstack")
 
