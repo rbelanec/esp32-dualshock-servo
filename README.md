@@ -32,7 +32,8 @@ servo can't read the signal and jitters.
 
 ## Build and flash
 
-The project uses PlatformIO in VS Code.
+The project uses PlatformIO in VS Code. These steps are for Linux; on Windows, follow [docs/windows.md](docs/windows.md),
+which covers the USB driver, path length limits and COM ports.
 
 1. Clone with submodules (Arduino core and BTstack):
 
