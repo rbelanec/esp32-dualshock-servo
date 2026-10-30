@@ -5,6 +5,7 @@ full left is 0°, center is 90°, full right is 180°.
 
 All project code is in `main/dualshock_servo.cpp`. The build setup comes from Ricardo Quesada's
 [esp-idf-arduino-bluepad32-template](https://github.com/ricardoquesada/esp-idf-arduino-bluepad32-template).
+`arduino/dualshock_servo/` holds the same program as a sketch for the Arduino IDE.
 
 ## Hardware
 
@@ -58,6 +59,33 @@ echo 'SUBSYSTEM=="tty", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", TAG+=
 sudo udevadm control --reload-rules
 ```
 
+## Arduino IDE version
+
+`arduino/dualshock_servo/dualshock_servo.ino` does the same as the PlatformIO build: same pins, same servo timing, same
+serial messages. It builds against Bluepad32's own board package instead of this repo's ESP-IDF setup.
+
+1. In **File → Preferences → Additional boards manager URLs**, add both:
+
+   ```
+   https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+   https://raw.githubusercontent.com/ricardoquesada/esp32-arduino-lib-builder/master/bluepad32_files/package_esp32_bluepad32_index.json
+   ```
+
+2. In **Tools → Board → Boards Manager**, install `esp32` by Espressif, then `esp32_bluepad32` by Ricardo Quesada.
+3. Select **Tools → Board → ESP32 + Bluepad32 Arduino → ESP32 Dev Module** and your serial port.
+4. Open `arduino/dualshock_servo/dualshock_servo.ino` and click **Upload**.
+5. Open the serial monitor at 115200 baud.
+
+The sketch differs from `main/dualshock_servo.cpp` in two places:
+
+- It prints with `Serial`, like the board package's own Controller example.
+- `esp32_bluepad32` 4.1.0 is built on Arduino ESP32 core 2.0.17. Core 2.x drives PWM through numbered LEDC channels
+  (`ledcSetup()`, `ledcAttachPin()`, `ledcWrite(channel, ...)`), while core 3.x, which the PlatformIO build uses,
+  attaches by pin (`ledcAttach()`, `ledcWrite(pin, ...)`). The sketch picks the right calls with
+  `ESP_ARDUINO_VERSION_MAJOR`, so it keeps compiling if the board package moves to core 3.x.
+
+GitHub Actions compiles the sketch on every push, but only the PlatformIO build has run on hardware.
+
 ## Using it
 
 1. Power the board. The servo sweeps to 0°, 180° and back to 90°. This self-test runs on every boot, so you can check
@@ -88,7 +116,8 @@ On boards with an LED on GPIO 2, the LED blinks fast while scanning and stays on
 Bluepad32, the library that talks to the controller, runs on the BTstack Bluetooth stack. The Arduino core for ESP32
 ships with a different stack (Bluedroid), and the two can't run together. The project therefore builds with ESP-IDF,
 includes the Arduino core as an ESP-IDF component, and adds BTstack and Bluepad32 as further components. You still
-write `setup()` and `loop()` in `dualshock_servo.cpp`, but the Arduino IDE can't build this project.
+write `setup()` and `loop()` in `dualshock_servo.cpp`, but the Arduino IDE can't build this ESP-IDF project. For
+the Arduino IDE, use the sketch in `arduino/`, which builds against Bluepad32's board package instead.
 
 ### `Console` instead of `Serial`
 
