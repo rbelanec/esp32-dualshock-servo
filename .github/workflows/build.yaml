@@ -1,4 +1,4 @@
-name: Build with ESP-IDF v5.5
+name: Build
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  build:
+  esp-idf:
 
     runs-on: ubuntu-latest
 
@@ -23,3 +23,26 @@ jobs:
         esp_idf_version: release-v5.5
         target: esp32
         command: "idf.py set-target esp32 && idf.py build"
+
+  arduino-ide:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+
+    - name: Compile the Arduino IDE sketch
+      uses: arduino/compile-sketches@v1
+      with:
+        fqbn: esp32-bluepad32:esp32:esp32
+        # esp32_bluepad32 takes its toolchain from Espressif's index, so install
+        # the core version it is built on (2.0.17) to get the same tools.
+        platforms: |
+          - name: esp32:esp32
+            source-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+            version: 2.0.17
+          - name: esp32-bluepad32:esp32
+            source-url: https://raw.githubusercontent.com/ricardoquesada/esp32-arduino-lib-builder/master/bluepad32_files/package_esp32_bluepad32_index.json
+        sketch-paths: |
+          - arduino/dualshock_servo
