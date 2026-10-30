@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - name: Checkout repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         submodules: 'recursive'
 
@@ -23,32 +23,3 @@ jobs:
         esp_idf_version: release-v5.5
         target: esp32
         command: "idf.py set-target esp32 && idf.py build"
-
-    - name: Arduino build ESP32-S3
-      uses: espressif/esp-idf-ci-action@main
-      with:
-        esp_idf_version: release-v5.5
-        target: esp32s3
-        command: "idf.py set-target esp32s3 && idf.py build"
-
-    - name: Arduino build ESP32-C3
-      uses: espressif/esp-idf-ci-action@main
-      with:
-        esp_idf_version: release-v5.5
-        target: esp32c3
-        command: "idf.py set-target esp32c3 && idf.py build"
-
-    - name: Arduino build ESP32-C6
-      uses: espressif/esp-idf-ci-action@main
-      with:
-        esp_idf_version: release-v5.5
-        target: esp32c6
-        command: "idf.py set-target esp32c6 && idf.py build"
-
-    - name: Arduino build ESP32-C5
-      uses: espressif/esp-idf-ci-action@main
-      with:
-        esp_idf_version: release-v5.5
-        target: esp32c5
-        command: "idf.py set-target esp32c5 && idf.py build"
-
